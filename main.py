@@ -113,3 +113,105 @@ def generate_simulation(
     html_output = generate_simulation_html(request.question)
     
     return {"html": html_output}
+
+# ----------------- DYNAMIC CLOUD CONTENT & UPDATE MANAGEMENT -----------------
+
+@app.get("/api/config")
+def get_app_config():
+    """
+    Allows the app to check for updates and global announcements dynamically.
+    """
+    return {
+        "latest_version": "1.0.1",
+        "minimum_version": "1.0.0",
+        "update_url": "https://letsplaywithphysics.in/app-release.apk",
+        "update_message": "A new version of Let's Play With Physics is available with enhanced simulations and features!",
+        "announcement": "Welcome to Let's Play With Physics! Master JEE & NEET with interactive AI simulations."
+    }
+
+@app.get("/api/features")
+def get_dashboard_features():
+    """
+    Returns features enabled on the dashboard.
+    You can turn features ON or OFF here anytime without updating the APK!
+    """
+    return [
+        {
+            "id": "ai_sim",
+            "title": "AI Simulator",
+            "subtitle": "Physics Sims",
+            "icon": "rocket_launch",
+            "color": "0xFF44AAFF",
+            "is_enabled": True
+        },
+        {
+            "id": "formula_sheets",
+            "title": "Formula Sheets",
+            "subtitle": "JEE & NEET",
+            "icon": "functions",
+            "color": "0xFFF7C948",
+            "is_enabled": True
+        },
+        {
+            "id": "video_lectures",
+            "title": "Video Lectures",
+            "subtitle": "Full Classes",
+            "icon": "play_circle_fill",
+            "color": "0xFFF7C948",
+            "is_enabled": False # Set to True whenever you upload video lectures!
+        },
+        {
+            "id": "study_material",
+            "title": "Study Material",
+            "subtitle": "Chapter Notes",
+            "icon": "menu_book",
+            "color": "0xFF44AAFF",
+            "is_enabled": False # Set to True whenever you upload notes!
+        }
+    ]
+
+@app.get("/api/chapters/{exam_name}")
+def get_chapters(exam_name: str):
+    """
+    Returns chapter lists and PDF links dynamically from the cloud.
+    """
+    neet_chapters = [
+        {"title": "Kinematics", "pdf_url": "https://letsplaywithphysics.in/Kinematics%20formula%20sheet.pdf"},
+        {"title": "Newton's Laws of Motion", "pdf_url": "https://letsplaywithphysics.in/Newton%20laws%20of%20motion%20formula%20sheet.pdf"},
+        {"title": "Work, Power and Energy", "pdf_url": "https://letsplaywithphysics.in/Work%20power%20and%20energy%20formula%20sheet2.pdf"},
+        {"title": "System of Particles & Rotational Motion", "pdf_url": "https://letsplaywithphysics.in/System%20of%20particles%20and%20rotational%20motion%20formula%20sheet.pdf"},
+        {"title": "Gravitation", "pdf_url": "https://letsplaywithphysics.in/Gravitation%20formula%20sheet%20.pdf"},
+        {"title": "Mechanical Properties of Matter", "pdf_url": "https://letsplaywithphysics.in/Mechanical%20properties%20of%20matter%20formula%20sheet.pdf"},
+        {"title": "Thermodynamics & KTG", "pdf_url": "https://letsplaywithphysics.in/Thermodynamics%20and%20ktg%20formula%20sheet%20.pdf"},
+        {"title": "Oscillations", "pdf_url": "https://letsplaywithphysics.in/Oscillations%20formula%20sheet.pdf"},
+        {"title": "Waves", "pdf_url": "https://letsplaywithphysics.in/Waves.pdf"},
+        {"title": "Electrostatics", "pdf_url": "https://letsplaywithphysics.in/Electrostatics%20formula%20sheet%20.pdf"},
+        {"title": "Current Electricity", "pdf_url": "https://letsplaywithphysics.in/Current%20electricity%20formula%20sheet.pdf"},
+        {"title": "Moving Charges and Magnetism", "pdf_url": "https://letsplaywithphysics.in/Moving%20charges%20and%20magnetism%20formula%20sheet%20.pdf"},
+        {"title": "Magnetism and Matter", "pdf_url": "https://letsplaywithphysics.in/Magnetism%20and%20matter%20neet%20formula%20sheet.pdf"},
+        {"title": "Electromagnetic Induction (EMI)", "pdf_url": "https://letsplaywithphysics.in/EMI%20formula%20sheet.pdf"},
+        {"title": "Alternating Current (AC)", "pdf_url": "https://letsplaywithphysics.in/AC%20formula%20sheet.pdf"},
+        {"title": "Ray Optics", "pdf_url": "https://letsplaywithphysics.in/Ray%20optics%20formula%20sheet.pdf"},
+        {"title": "Wave Optics", "pdf_url": "https://letsplaywithphysics.in/Wave_optics_formula_sheet%20(1).pdf"},
+        {"title": "Dual Nature of Radiation", "pdf_url": "https://letsplaywithphysics.in/Dual%20nature%20of%20the%20radiation.pdf"},
+        {"title": "Modern Physics", "pdf_url": "https://letsplaywithphysics.in/Modern%20physics%20formula%20sheet%20.pdf"}
+    ]
+
+    jee_chapters = [
+        {"title": "Kinematics", "pdf_url": "https://letsplaywithphysics.in/Kinematics%20formula%20sheet2.pdf"},
+        {"title": "Newton's Laws of Motion", "pdf_url": "https://letsplaywithphysics.in/Newton%20laws%20of%20motion%20formula%20sheet2.pdf"},
+        {"title": "Work, Power and Energy", "pdf_url": "https://letsplaywithphysics.in/Work%20power%20and%20energy%20formula%20sheet2.pdf"},
+        {"title": "System of Particles & Rotational Motion", "pdf_url": "https://letsplaywithphysics.in/System%20of%20particles%20and%20rotational%20motion%20formula%20sheet.pdf"},
+        {"title": "Gravitation", "pdf_url": "https://letsplaywithphysics.in/Gravitation%20formula%20sheet%20.pdf"},
+        {"title": "Thermodynamics", "pdf_url": "https://letsplaywithphysics.in/Thermodynamics%20formula%20sheet2.pdf"},
+        {"title": "Waves", "pdf_url": "https://letsplaywithphysics.in/Waves%20formula%20sheet%20jee.pdf"},
+        {"title": "Electrostatics", "pdf_url": "https://letsplaywithphysics.in/Electrostatics%20formula%20sheet%20jee.pdf"},
+        {"title": "Current Electricity", "pdf_url": "https://letsplaywithphysics.in/Current%20electricity%20formula%20sheet.pdf"},
+        {"title": "Moving Charges and Magnetism", "pdf_url": "https://letsplaywithphysics.in/Moving%20charges%20and%20magnetism%20formula%20sheet%20jee.pdf"},
+        {"title": "Magnetism and Matter", "pdf_url": "https://letsplaywithphysics.in/Magnetism%20and%20matter%20formula%20sheet.pdf"},
+        {"title": "Dual Nature of Matter", "pdf_url": "https://letsplaywithphysics.in/Dual%20nature%20of%20matter%20formula%20sheet%20jee.pdf"}
+    ]
+
+    if "jee" in exam_name.lower():
+        return jee_chapters
+    return neet_chapters
